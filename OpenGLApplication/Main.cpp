@@ -63,8 +63,8 @@ GLfloat lightVertices[] =
 	0.1f, -0.1f,  0.1f,
    -0.1f,  0.1f,  0.1f,
    -0.1f,  0.1f, -0.1f,
-    0.1f,   0.1f, -0.1f,
-    0.1f,   0.1f,  0.1f
+    0.1f,  0.1f, -0.1f,
+    0.1f,  0.1f,  0.1f
 };
 
 GLuint lightIndices[] =
@@ -150,7 +150,7 @@ int main()
 	lightVBO.Unbind();
 	lightEBO.Unbind();
 
-
+	glm::vec4 lightColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	glm::vec3 lightPos = glm::vec3(0.5f, 0.5f, 0.5f);
 	glm::mat4 lightModel = glm::mat4(1.0f);
 	lightModel = glm::translate(lightModel, lightPos);
@@ -161,8 +161,12 @@ int main()
 
 	lightShader.Activate();
 	glUniformMatrix4fv(glGetUniformLocation(lightShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(lightModel));
+	glUniform4f(glGetUniformLocation(lightShader.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
 	shaderProgram.Activate();
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgram.ID, "model"), 1, GL_FALSE, glm::value_ptr(pyramidModel));
+	glUniform4f(glGetUniformLocation(shaderProgram.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
+	glUniform3f(glGetUniformLocation(shaderProgram.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+
 
 	//Texture
 	Texture appliedTexture("brick.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
@@ -187,6 +191,7 @@ int main()
 
 		//Tell OpenGL which program we want to use
 		shaderProgram.Activate();
+		glUniform3f(glGetUniformLocation(shaderProgram.ID, "camPos"), camera.Position.x, camera.Position.y, camera.Position.z);
 		camera.Matrix(shaderProgram, "camMatrix");
 
 		// Binding texture so it appears in rendering
@@ -214,6 +219,11 @@ int main()
 	EBO1.Delete();
 	shaderProgram.Delete();
 	appliedTexture.Delete();
+
+	lightVAO.Delete();
+	lightVBO.Delete();
+	lightEBO.Delete();
+	lightShader.Delete();
 	glfwDestroyWindow(window);
 	glfwTerminate();
 	return 0;
