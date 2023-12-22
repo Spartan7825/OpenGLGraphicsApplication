@@ -27,7 +27,7 @@ public:
 	int width, height;
 
 	// Variables to adjust camera speed and sentivity
-	float speed = 0.1f;
+	float speed = 0.005f;
 	float sensitivity = 75.0f;
 
 	// Constructor to set up initial values
